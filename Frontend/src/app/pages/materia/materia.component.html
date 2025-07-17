@@ -1,0 +1,54 @@
+<div class="container">
+    <h2>Gerenciamento de Matérias</h2>
+
+    <div class="actions">
+        <button (click)="addMateria()" class="btn btn-insert">Adicionar Matéria</button>
+        <button (click)="loadMaterias()" class="btn btn-update">Atualizar Lista</button>
+    </div>
+
+    <!-- Tabela com barra de rolagem horizontal -->
+    <div class="table-container" *ngIf="materias && materias.length > 0; else noData">
+        <table class="materia-table">
+            <thead>
+                <tr>
+                    <th>Nome da Matéria</th>
+                    <th class="actionsColumn">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let mat of materias">
+                    <td>{{ mat.nomeMateria }}</td>
+                    <td class="actionsColumn">
+                        <button (click)="editMateria(mat)" class="btn btn-edit">Editar</button>
+                        <button (click)="deleteMateria(mat.id!)" class="btn btn-delete">Excluir</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <ng-template #noData>
+        <p>Nenhuma matéria cadastrada.</p>
+    </ng-template>
+
+    <!-- Exibição de mensagem de erro -->
+    <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
+</div>
+
+<!-- Modal para Adição/ Edição de Matéria -->
+<div class="modal" *ngIf="showForm">
+    <div class="modal-content">
+        <span class="close" (click)="cancel()">&times;</span>
+        <h3>{{ editing ? 'Editar Matéria' : 'Adicionar Matéria' }}</h3>
+        <form (ngSubmit)="saveMateria()">
+            <div class="form-group">
+                <label for="nomeMateria">Nome da Matéria:</label>
+                <input type="text" id="nomeMateria" name="nomeMateria" [(ngModel)]="currentMateria.nomeMateria" required
+                    class="form-control" maxlength="50" placeholder="Digite o nome da matéria">
+            </div>
+            <div class="form-buttons">
+                <button type="submit" class="btn btn-insert">Salvar</button>
+                <button type="button" (click)="cancel()" class="btn btn-cancel">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>

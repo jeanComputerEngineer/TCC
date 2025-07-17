@@ -1,0 +1,43 @@
+/* Configurações básicas para o body */
+body {
+    background-color: #000000;
+    /* Cor de fundo definida */
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    position: relative;
+    /* Necessário para posicionamento do pseudo-elemento */
+    z-index: 0;
+    /* Outras propriedades, se necessário */
+}
+
+/* Pseudo-elemento para a imagem de fundo */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-image: url('./app/images/Fundo.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    z-index: -1;
+    /* Fica atrás do conteúdo */
+    filter: brightness(1);
+    /* Brilho padrão para o tema claro */
+}
+
+/* Tema claro */
+body.theme-light::before,
+body:not(.theme-dark)::before {
+    filter: brightness(1);
+    /* Brilho normal para o tema claro */
+}
+
+/* Tema escuro */
+body.theme-dark::before {
+    filter: brightness(0.4);
+    /* Reduz o brilho para escurecer a imagem */
+}

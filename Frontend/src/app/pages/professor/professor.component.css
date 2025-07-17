@@ -1,0 +1,299 @@
+/* ================= Tema Claro (padrão) ================= */
+
+/* Container principal */
+.container {
+    margin-top: 70px;
+    margin-bottom: 30px;
+    padding: 20px 30px;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    min-height: 100vh;
+    /* Ocupa 100% da altura da tela */
+    font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    background-color: transparent;
+    /* Fundo transparente */
+    color: #333333;
+    border-radius: 10px;
+}
+
+/* Headings */
+h2 {
+    text-align: center;
+    margin: 0;
+    font-size: 2rem;
+    color: #ffffff;
+}
+
+h3 {
+    margin-bottom: 1rem;
+    color: #333333;
+}
+
+/* Ações */
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Tabelas responsivas */
+.table-responsive {
+    overflow-x: auto;
+    margin-bottom: 1rem;
+}
+
+/* Tabela de Professores */
+.professor-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+    min-width: 600px;
+    background-color: #ffffff;
+}
+
+.professor-table th,
+.professor-table td {
+    border: 1px solid #ddd;
+    padding: 0.75rem;
+    text-align: left;
+}
+
+.professor-table th {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.professor-table tr:nth-child(even) {
+    background-color: #f8f8f8;
+}
+
+.professor-table tr:hover {
+    background-color: #eaeaea;
+}
+
+.professor-table th:last-child,
+.professor-table td:last-child {
+    width: 30%;
+    text-align: center;
+}
+
+/* Formulários */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.form-group input[type="text"],
+.form-group select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+/* Mensagens de erro */
+.error small {
+    color: #dc3545;
+    display: block;
+}
+
+.form-error {
+    color: #dc3545;
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+/* Botões */
+.btn {
+    padding: 0.5rem 1rem;
+    margin: 2.5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-success {
+    background-color: #167b2e;
+    color: #fff;
+    margin: 0;
+}
+
+.btn-success:hover {
+    background-color: #01b601;
+}
+
+.btn-primary {
+    background-color: #004187;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: #006fde;
+}
+
+.btn-danger {
+    background-color: #87000d;
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background-color: #e00000;
+}
+
+.btn-secondary {
+    background-color: #676f77;
+    color: #fff;
+    margin: 0;
+}
+
+.btn-secondary:hover {
+    background-color: #7a838a;
+}
+
+/* Botão para "adicionar matérias" – em amarelo */
+.btn-info {
+    background-color: #ad8100;
+    color: #fff;
+}
+
+.btn-info:hover {
+    background-color: #e0a800;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: #f8f9fa;
+    color: #333333;
+    padding: 1.5rem;
+    border-radius: 4px;
+    width: 100%;
+    max-width: 500px;
+    position: relative;
+}
+
+.modal-content .close {
+    position: absolute;
+    top: 0.5rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* Alinhamento e espaçamento dos botões no modal */
+.modal-content .form-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .form-buttons {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+    }
+}
+
+/* ================= Modo Escuro ================= */
+:host-context(.theme-dark) .container {
+    background-color: transparent;
+    color: #e0e0e0;
+}
+
+:host-context(.theme-dark) h2,
+:host-context(.theme-dark) h3 {
+    color: #9b9b9b;
+}
+
+:host-context(.theme-dark) .professor-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+    min-width: 600px;
+    background-color: #2a2a2a;
+}
+
+:host-context(.theme-dark) .professor-table th,
+:host-context(.theme-dark) .professor-table td {
+    border: 1px solid #444;
+    padding: 0.75rem;
+    text-align: left;
+}
+
+:host-context(.theme-dark) .professor-table th {
+    background-color: #3a3a3a;
+    color: #fff;
+}
+
+:host-context(.theme-dark) .professor-table tr:nth-child(even) {
+    background-color: #262626;
+}
+
+:host-context(.theme-dark) .professor-table tr:hover {
+    background-color: #333333;
+}
+
+:host-context(.theme-dark) .form-container {
+    background-color: #181818;
+    color: #e0e0e0;
+    border-color: #444;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+:host-context(.theme-dark) .form-control {
+    background-color: #333333;
+    color: #e0e0e0;
+    border: 1px solid #555;
+}
+
+:host-context(.theme-dark) .form-control::placeholder {
+    color: #bbb;
+}
+
+:host-context(.theme-dark) .form-group label {
+    color: #ccc;
+}
+
+:host-context(.theme-dark) .professor-table th:last-child,
+:host-context(.theme-dark) .professor-table td:last-child {
+    width: 30%;
+    text-align: center;
+}
+
+:host-context(.theme-dark) .modal-content {
+    background-color: #181818;
+    color: #e0e0e0;
+}

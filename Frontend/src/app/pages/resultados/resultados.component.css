@@ -1,0 +1,195 @@
+/* ================= Tema Claro (padrão) ================= */
+
+.container {
+    margin-top: 70px;
+    margin-bottom: 30px;
+    padding: 20px 30px;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    min-height: 100vh;
+    /* Ocupa 100% da altura da tela */
+    font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    background-color: transparent;
+    /* Fundo transparente */
+    color: #ffffff;
+    border-radius: 10px;
+}
+
+/* Headings */
+h2 {
+    text-align: center;
+    margin: 0;
+    font-size: 2rem;
+    color: #ffffff;
+}
+
+h3,
+h4 {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    color: #ffffff;
+}
+
+/* Ações */
+.actions {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+/* Seções */
+.section {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #ccc;
+}
+
+/* Formulários */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+/* Mensagens de erro */
+.error small {
+    color: #dc3545;
+}
+
+/* Tabelas responsivas */
+.table-responsive {
+    overflow-x: auto;
+    margin-top: 1rem;
+}
+
+/* Grade de horários (Schedule Grid) */
+.schedule-grid {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.schedule-grid th,
+.schedule-grid td {
+    border: 1px solid #ddd;
+    padding: 0.75rem;
+    text-align: center;
+}
+
+.schedule-grid th {
+    background-color: #6c757d;
+    color: #ffffff;
+}
+
+.schedule-grid tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.schedule-grid tr:hover {
+    background-color: #e0e0e0;
+}
+
+/* Botões */
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-right: 0.5rem;
+}
+
+.btn:hover {
+    transform: scale(1.02);
+}
+
+/* Cores dos botões – ajustadas para ficar igual ao componente Período */
+.btn-success {
+    background-color: #28a745;
+    color: #ffffff;
+}
+
+.btn-success:hover {
+    background-color: #01b601;
+}
+
+.btn-primary {
+    background-color: #005aba;
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background-color: #006fde;
+}
+
+.btn-danger {
+    background-color: #ab0011;
+    color: #ffffff;
+}
+
+.btn-danger:hover {
+    background-color: #e00000;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: #ffffff;
+}
+
+.btn-secondary:hover {
+    background-color: #7a838a;
+}
+
+/* Botão para "adicionar matérias" – em amarelo */
+.btn-info {
+    background-color: #ffc107;
+    color: #ffffff;
+}
+
+.btn-info:hover {
+    background-color: #e0a800;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .actions {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* ================= Modo Escuro ================= */
+:host-context(.theme-dark) .container {
+    background-color: transparent;
+    color: #ffffff;
+}
+
+:host-context(.theme-dark) h2,
+:host-context(.theme-dark) h3,
+:host-context(.theme-dark) h4 {
+    color: #ffffff;
+}
+
+:host-context(.theme-dark) .schedule-grid th {
+    background-color: #343a40;
+    color: #ffffff;
+}

@@ -1,0 +1,86 @@
+<div class="container">
+    <h2>Cadastro de Período</h2>
+
+    <div class="actions">
+        <button (click)="addPeriodo()" class="btn btn-insert">Adicionar Período</button>
+        <button (click)="loadPeriodos()" class="btn btn-update">Atualizar Lista</button>
+    </div>
+
+    <!-- Tabela com rolagem horizontal -->
+    <div class="table-container" *ngIf="periodos && periodos.length > 0; else noData">
+        <table class="periodo-table">
+            <thead>
+                <tr>
+                    <th>Hora de Início</th>
+                    <th>Hora de Término</th>
+                    <th>Duração (min)</th>
+                    <th>Início do Intervalo</th>
+                    <th>Fim do Intervalo</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let per of periodos">
+                    <td>{{ per.horarioInicio }}</td>
+                    <td>{{ per.horarioFim }}</td>
+                    <td>{{ per.duracaoAula }}</td>
+                    <td>{{ per.intervaloInicio }}</td>
+                    <td>{{ per.intervaloFim }}</td>
+                    <td>
+                        <button (click)="editPeriodo(per)" class="btn btn-edit">Editar</button>
+                        <button (click)="deletePeriodo(per.id!)" class="btn btn-delete">Excluir</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <ng-template #noData>
+        <p>Nenhum período cadastrado.</p>
+    </ng-template>
+
+    <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+    <!-- Modal para Inserir/Editar Período -->
+    <div class="modal" *ngIf="showForm">
+        <div class="modal-content">
+            <span class="close" (click)="cancel()">&times;</span>
+            <h3>{{ editing ? 'Editar Período' : 'Adicionar Período' }}</h3>
+            <form (ngSubmit)="savePeriodo()">
+                <div class="sameRow">
+                    <div class="form-group">
+                        <label for="horarioInicio">Hora de Início (HH:MM):</label>
+                        <input type="text" id="horarioInicio" name="horarioInicio"
+                            [(ngModel)]="currentPeriodo.horarioInicio" required class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="horarioFim">Hora de Término (HH:MM):</label>
+                        <input type="text" id="horarioFim" name="horarioFim" [(ngModel)]="currentPeriodo.horarioFim"
+                            required class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="duracaoAula">Duração da Aula (min):</label>
+                        <input type="number" id="duracaoAula" name="duracaoAula"
+                            [(ngModel)]="currentPeriodo.duracaoAula" required class="form-control">
+                    </div>
+                </div>
+
+                <div class="sameRow">
+                    <div class="form-group">
+                        <label for="intervaloInicio">Início do Intervalo (HH:MM):</label>
+                        <input type="text" id="intervaloInicio" name="intervaloInicio"
+                            [(ngModel)]="currentPeriodo.intervaloInicio" required class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="intervaloFim">Fim do Intervalo (HH:MM):</label>
+                        <input type="text" id="intervaloFim" name="intervaloFim"
+                            [(ngModel)]="currentPeriodo.intervaloFim" required class="form-control">
+                    </div>
+                </div>
+                <div class="form-buttons">
+                    <button type="submit" class="btn btn-insert">Salvar</button>
+                    <button type="button" (click)="cancel()" class="btn btn-cancel">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

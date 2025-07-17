@@ -1,0 +1,102 @@
+<div class="container">
+    <h2>Horários - Resultados</h2>
+
+    <div class="actions">
+        <!-- Botão para gerar horários (inserção: verde) -->
+        <button (click)="generateHorarios()" class="btn btn-success">Gerar Horários</button>
+    </div>
+
+    <!-- Seção para Horários por Turma -->
+    <div class="section">
+        <h3>Horários por Turma</h3>
+        <div class="form-group">
+            <label for="turmaSelect">Selecione a Turma:</label>
+            <select id="turmaSelect" class="form-control" [(ngModel)]="selectedTurma">
+                <option [ngValue]="null">-- Selecione --</option>
+                <option *ngFor="let t of turmas" [ngValue]="t">
+                    {{ t.nomeTurma }}
+                </option>
+            </select>
+            <div class="error" *ngIf="turmaError">
+                <small>{{ turmaError }}</small>
+            </div>
+        </div>
+        <!-- Botão para exibir horários da turma (edição: azul) -->
+        <button (click)="loadHorariosByTurma()" class="btn btn-primary">Exibir Horários</button>
+
+        <div class="table-responsive" *ngIf="timeSlotsTurma.length > 0">
+            <h4>Quadro de Horários - Turma</h4>
+            <table class="schedule-grid">
+                <thead>
+                    <tr>
+                        <th>Horário</th>
+                        <th *ngFor="let day of days">{{ day }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let time of timeSlotsTurma">
+                        <td>{{ time }}</td>
+                        <td *ngFor="let day of days">
+                            <div *ngIf="gridTurma[time][day]">
+                                <div>Matéria: {{ getMateriaName(gridTurma[time][day]?.idMateria) }}</div>
+                                <div>Professor: {{ getProfessorName(gridTurma[time][day]?.idProfessor) }}</div>
+                            </div>
+                            <div *ngIf="!gridTurma[time][day]">&nbsp;</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div *ngIf="timeSlotsTurma.length === 0 && selectedTurma">
+            <p>Nenhum horário encontrado para a turma selecionada.</p>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- Seção para Horários por Professor -->
+    <div class="section">
+        <h3>Horários por Professor</h3>
+        <div class="form-group">
+            <label for="profSelect">Selecione o Professor:</label>
+            <select id="profSelect" class="form-control" [(ngModel)]="selectedProfessor">
+                <option [ngValue]="null">-- Selecione --</option>
+                <option *ngFor="let p of professores" [ngValue]="p">
+                    {{ p.nomeProfessor }}
+                </option>
+            </select>
+            <div class="error" *ngIf="professorError">
+                <small>{{ professorError }}</small>
+            </div>
+        </div>
+        <!-- Botão para exibir horários do professor (edição: azul) -->
+        <button (click)="loadHorariosByProfessor()" class="btn btn-primary">Exibir Horários</button>
+
+        <div class="table-responsive" *ngIf="timeSlotsProfessor.length > 0">
+            <h4>Quadro de Horários - Professor</h4>
+            <table class="schedule-grid">
+                <thead>
+                    <tr>
+                        <th>Horário</th>
+                        <th *ngFor="let day of days">{{ day }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let time of timeSlotsProfessor">
+                        <td>{{ time }}</td>
+                        <td *ngFor="let day of days">
+                            <div *ngIf="gridProfessor[time][day]">
+                                <div>Matéria: {{ getMateriaName(gridProfessor[time][day]?.idMateria) }}</div>
+                                <div>Professor: {{ getProfessorName(gridProfessor[time][day]?.idProfessor) }}</div>
+                            </div>
+                            <div *ngIf="!gridProfessor[time][day]">&nbsp;</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div *ngIf="timeSlotsProfessor.length === 0 && selectedProfessor">
+            <p>Nenhum horário encontrado para o professor selecionado.</p>
+        </div>
+    </div>
+</div>
