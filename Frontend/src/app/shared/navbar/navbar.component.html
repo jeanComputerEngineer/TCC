@@ -1,28 +1,7 @@
-<!-- src/app/shared/navbar/navbar.component.html -->
 <nav class="navbar">
-    <!-- Botão Hamburger para telas pequenas -->
-    <button class="navbar-toggler" (click)="toggleMenu()">
-        &#9776;
-    </button>
-
-    <a class="navbar-brand" routerLink="/">Sistema de Horários</a>
-    <div class="collapse navbar-collapse" [ngClass]="{'active': menuAtivo}">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item"><a class="nav-link" routerLink="/periodo">Etapa 1: Período</a></li>
-            <li class="nav-item"><a class="nav-link" routerLink="/materia">Etapa 2: Matérias</a></li>
-            <li class="nav-item"><a class="nav-link" routerLink="/professor">Etapa 3: Professores</a></li>
-            <li class="nav-item"><a class="nav-link" routerLink="/turma">Etapa 4: Turmas</a></li>
-            <li class="nav-item"><a class="nav-link" routerLink="/resultados">Etapa 5: Resultados</a></li>
-            <!-- Botão de alternar tema com ícone -->
-            <li class="nav-item">
-                <button class="theme-toggle-btn" (click)="toggleTema()">
-                    <!-- Exibe o ícone da lua quando o tema está claro e o ícone do sol quando está escuro -->
-                    <span *ngIf="!temaEscuro" aria-label="Ativar tema escuro">🌙</span>
-                    <span *ngIf="temaEscuro" aria-label="Ativar tema claro">☀️</span>
-                </button>
-            </li>
-        </ul>
-    </div>
+  <div class="brand">Root Phenotyping Studio</div>
+  <button class="theme-toggle-btn" (click)="toggleTema()" aria-label="Toggle theme">
+    <span *ngIf="!temaEscuro">🌙</span>
+    <span *ngIf="temaEscuro">☀️</span>
+  </button>
 </nav>
-<!-- Overlay para fechar o menu clicando fora (opcional) -->
-<div class="sidebar-overlay" [ngClass]="{'active': menuAtivo}" (click)="toggleMenu()"></div>
