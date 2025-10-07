@@ -4,6 +4,8 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RootAnalysisResponse, RootAnalysisService } from '../../services/root-analysis.service';
 import { Subscription, debounceTime } from 'rxjs';
 
+type ViewMode = 'original' | 'grayscale' | 'segmented' | 'skeleton';
+
 @Component({
   selector: 'app-root-analyzer',
   standalone: true,
@@ -24,8 +26,17 @@ export class RootAnalyzerComponent implements OnInit, OnDestroy {
   selectedFile?: File;
   previewUrl?: string;
   processing = false;
+  previewProcessing = false;
   errorMessage?: string;
   analysis?: RootAnalysisResponse;
+  previewAnalysis?: RootAnalysisResponse;
+  viewMode: ViewMode = 'original';
+  readonly viewModes: { id: ViewMode; label: string }[] = [
+    { id: 'original', label: 'Original' },
+    { id: 'grayscale', label: 'Tons de cinza' },
+    { id: 'segmented', label: 'Segmentado' },
+    { id: 'skeleton', label: 'Esqueleto' },
+  ];
 
   ngOnInit(): void {
     this.formChangesSubscription = this.form.valueChanges
@@ -46,11 +57,14 @@ export class RootAnalyzerComponent implements OnInit, OnDestroy {
       this.selectedFile = undefined;
       this.previewUrl = undefined;
       this.analysis = undefined;
+      this.previewAnalysis = undefined;
       return;
     }
     this.selectedFile = input.files[0];
     this.analysis = undefined;
     this.errorMessage = undefined;
+    this.previewAnalysis = undefined;
+    this.viewMode = 'original';
     const reader = new FileReader();
     reader.onload = () => {
       this.previewUrl = typeof reader.result === 'string' ? reader.result : undefined;
@@ -107,6 +121,8 @@ export class RootAnalyzerComponent implements OnInit, OnDestroy {
     const threshold = this.form.value.threshold ?? undefined;
     if (!auto) {
       this.processing = true;
+    } else {
+      this.previewProcessing = true;
     }
     this.errorMessage = undefined;
     this.activeRequest?.unsubscribe();
@@ -115,13 +131,22 @@ export class RootAnalyzerComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           this.analysis = response;
-          this.processing = false;
+          this.previewAnalysis = response;
+          if (auto) {
+            this.previewProcessing = false;
+          } else {
+            this.processing = false;
+            this.previewProcessing = false;
+          }
           this.activeRequest = undefined;
         },
         error: (error) => {
-          if (!auto) {
+          if (auto) {
+            this.previewProcessing = false;
+          } else {
             this.processing = false;
             this.analysis = undefined;
+            this.previewAnalysis = undefined;
           }
           const detail = error.error?.detail;
           if (detail) {
@@ -132,5 +157,32 @@ export class RootAnalyzerComponent implements OnInit, OnDestroy {
           this.activeRequest = undefined;
         },
       });
+  }
+
+  setViewMode(mode: ViewMode): void {
+    this.viewMode = mode;
+  }
+
+  isActiveMode(mode: ViewMode): boolean {
+    return this.viewMode === mode;
+  }
+
+  getPreviewSource(): string | undefined {
+    if (this.viewMode === 'original') {
+      return this.previewUrl;
+    }
+    if (!this.previewAnalysis) {
+      return undefined;
+    }
+    if (this.viewMode === 'grayscale') {
+      return this.getImageSource(this.previewAnalysis.grayscaleImage);
+    }
+    if (this.viewMode === 'segmented') {
+      return this.getImageSource(this.previewAnalysis.segmentedImage);
+    }
+    if (this.viewMode === 'skeleton') {
+      return this.getImageSource(this.previewAnalysis.skeletonImage);
+    }
+    return undefined;
   }
 }

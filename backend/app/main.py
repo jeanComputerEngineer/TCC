@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image, ImageOps
 from scipy.ndimage import distance_transform_edt
 from skimage.filters import threshold_otsu
+from skimage.morphology import thin
 
 app = FastAPI()
 
@@ -84,122 +85,49 @@ def filter_roots(binary_array: np.ndarray) -> np.ndarray:
 
 
 def skeletonize_image(binary_array: np.ndarray) -> np.ndarray:
-    image = (binary_array > 0).astype(np.uint8)
-    rows, cols = image.shape
-    while True:
-        first_phase = []
-        for r in range(1, rows - 1):
-            for c in range(1, cols - 1):
-                if image[r, c] == 0:
-                    continue
-                neighbors = [
-                    image[r - 1, c],
-                    image[r - 1, c + 1],
-                    image[r, c + 1],
-                    image[r + 1, c + 1],
-                    image[r + 1, c],
-                    image[r + 1, c - 1],
-                    image[r, c - 1],
-                    image[r - 1, c - 1],
-                ]
-                neighbor_count = sum(neighbors)
-                if neighbor_count < 2 or neighbor_count > 6:
-                    continue
-                transitions = sum(
-                    1
-                    for k in range(8)
-                    if neighbors[k] == 0 and neighbors[(k + 1) % 8] == 1
-                )
-                if transitions != 1:
-                    continue
-                if neighbors[0] * neighbors[2] * neighbors[4] != 0:
-                    continue
-                if neighbors[2] * neighbors[4] * neighbors[6] != 0:
-                    continue
-                first_phase.append((r, c))
-        changed = False
-        for r, c in first_phase:
-            image[r, c] = 0
-            changed = True
-        second_phase = []
-        for r in range(1, rows - 1):
-            for c in range(1, cols - 1):
-                if image[r, c] == 0:
-                    continue
-                neighbors = [
-                    image[r - 1, c],
-                    image[r - 1, c + 1],
-                    image[r, c + 1],
-                    image[r + 1, c + 1],
-                    image[r + 1, c],
-                    image[r + 1, c - 1],
-                    image[r, c - 1],
-                    image[r - 1, c - 1],
-                ]
-                neighbor_count = sum(neighbors)
-                if neighbor_count < 2 or neighbor_count > 6:
-                    continue
-                transitions = sum(
-                    1
-                    for k in range(8)
-                    if neighbors[k] == 0 and neighbors[(k + 1) % 8] == 1
-                )
-                if transitions != 1:
-                    continue
-                if neighbors[0] * neighbors[2] * neighbors[6] != 0:
-                    continue
-                if neighbors[0] * neighbors[4] * neighbors[6] != 0:
-                    continue
-                second_phase.append((r, c))
-        for r, c in second_phase:
-            image[r, c] = 0
-            changed = True
-        if not changed:
-            break
-    return image.astype(np.uint8)
+    skeleton = thin(binary_array.astype(bool))
+    return skeleton.astype(np.uint8)
 
 
 def compute_length(skeleton: np.ndarray, pixel_size_mm: float) -> float:
-    offsets = [
-        (0, 1, 1.0),
-        (1, 0, 1.0),
-        (1, 1, np.sqrt(2)),
-        (1, -1, np.sqrt(2)),
-    ]
-    total = 0.0
-    rows, cols = skeleton.shape
-    for r in range(rows):
-        for c in range(cols):
-            if skeleton[r, c] == 0:
-                continue
-            for dr, dc, weight in offsets:
-                nr = r + dr
-                nc = c + dc
-                if 0 <= nr < rows and 0 <= nc < cols and skeleton[nr, nc] == 1:
-                    total += weight
-    return total * pixel_size_mm
+    skeleton_bool = skeleton.astype(bool)
+    if not np.any(skeleton_bool):
+        return 0.0
+
+    def count_connections(dr: int, dc: int) -> int:
+        shifted = np.zeros_like(skeleton_bool)
+        if dr >= 0:
+            row_src = slice(0, skeleton_bool.shape[0] - dr)
+            row_dst = slice(dr, skeleton_bool.shape[0])
+        else:
+            row_src = slice(-dr, skeleton_bool.shape[0])
+            row_dst = slice(0, skeleton_bool.shape[0] + dr)
+        if dc >= 0:
+            col_src = slice(0, skeleton_bool.shape[1] - dc)
+            col_dst = slice(dc, skeleton_bool.shape[1])
+        else:
+            col_src = slice(-dc, skeleton_bool.shape[1])
+            col_dst = slice(0, skeleton_bool.shape[1] + dc)
+        shifted[row_dst, col_dst] = skeleton_bool[row_src, col_src]
+        return int(np.sum(np.logical_and(skeleton_bool, shifted)))
+
+    connections = (
+        count_connections(0, 1) * 1.0
+        + count_connections(1, 0) * 1.0
+        + count_connections(1, 1) * np.sqrt(2)
+        + count_connections(1, -1) * np.sqrt(2)
+    )
+    if connections == 0:
+        return pixel_size_mm
+    return connections * pixel_size_mm
 
 
 def compute_branch_data(skeleton: np.ndarray) -> tuple[int, np.ndarray]:
-    rows, cols = skeleton.shape
-    branch_mask = np.zeros_like(skeleton, dtype=bool)
-    count = 0
-    for r in range(rows):
-        for c in range(cols):
-            if skeleton[r, c] == 0:
-                continue
-            neighbors = 0
-            for dr in (-1, 0, 1):
-                for dc in (-1, 0, 1):
-                    if dr == 0 and dc == 0:
-                        continue
-                    nr = r + dr
-                    nc = c + dc
-                    if 0 <= nr < rows and 0 <= nc < cols and skeleton[nr, nc] == 1:
-                        neighbors += 1
-            if neighbors > 2:
-                branch_mask[r, c] = True
-                count += 1
+    skeleton_uint8 = skeleton.astype(np.uint8)
+    kernel = np.array([[1, 1, 1], [1, 0, 1], [1, 1, 1]], dtype=np.uint8)
+    neighbor_count = cv2.filter2D(skeleton_uint8, cv2.CV_8U, kernel, borderType=cv2.BORDER_CONSTANT)
+    branch_mask = np.logical_and(skeleton_uint8 == 1, neighbor_count > 2)
+    count = int(np.count_nonzero(branch_mask))
     return count, branch_mask
 
 

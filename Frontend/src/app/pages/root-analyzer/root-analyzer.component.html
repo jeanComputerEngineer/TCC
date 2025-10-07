@@ -29,8 +29,29 @@
   </form>
   <div class="panel preview" *ngIf="previewUrl">
     <h2>2. Pré-visualização</h2>
-    <p>Analise a imagem original enquanto as camadas processadas são atualizadas automaticamente.</p>
-    <img [src]="previewUrl" alt="Digitalização selecionada" />
+    <p>Explore as camadas processadas em tempo real conforme ajusta o DPI e o limiar.</p>
+    <div class="preview-modes">
+      <button
+        type="button"
+        *ngFor="let mode of viewModes"
+        (click)="setViewMode(mode.id)"
+        [class.active]="isActiveMode(mode.id)"
+      >
+        {{ mode.label }}
+      </button>
+    </div>
+    <div class="preview-stage" [class.loading]="previewProcessing">
+      <img *ngIf="getPreviewSource()" [src]="getPreviewSource()" alt="Pré-visualização processada" />
+      <div class="preview-overlay" *ngIf="previewProcessing">
+        <span class="preview-spinner"></span>
+        <p>Atualizando pré-visualização...</p>
+      </div>
+    </div>
+    <div class="preview-tags" *ngIf="analysis">
+      <span>DPI efetivo: {{ analysis.dpi | number: '1.0-0' }}</span>
+      <span>Limiar aplicado: {{ analysis.threshold | number: '1.0-0' }}</span>
+      <span>Tamanho do pixel: {{ analysis.pixelSizeMm | number: '1.3-3' }} mm</span>
+    </div>
   </div>
 </section>
 <section class="results" *ngIf="analysis">
