@@ -38,10 +38,10 @@ def extract_dpi(image: Image.Image, manual_dpi: Optional[float]) -> float:
             dpi_value = float(dpi_data)
     if dpi_value is None:
         if manual_dpi is None:
-            raise HTTPException(status_code=400, detail="Unable to determine DPI. Please provide a manual value.")
+            raise HTTPException(status_code=400, detail="Não foi possível determinar o DPI. Informe um valor manual.")
         dpi_value = manual_dpi
     if dpi_value <= 0:
-        raise HTTPException(status_code=400, detail="DPI must be greater than zero.")
+        raise HTTPException(status_code=400, detail="O DPI precisa ser maior que zero.")
     return float(dpi_value)
 
 
@@ -136,7 +136,7 @@ async def process_image(
     threshold: Optional[float] = Form(None),
 ) -> dict[str, object]:
     if threshold is not None and (threshold < 0 or threshold > 255):
-        raise HTTPException(status_code=400, detail="Threshold must be between 0 and 255.")
+        raise HTTPException(status_code=400, detail="O limiar deve estar entre 0 e 255.")
     file_bytes = await file.read()
     image = load_image(file_bytes)
     dpi = extract_dpi(image, manual_dpi)

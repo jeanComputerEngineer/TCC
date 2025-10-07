@@ -43,7 +43,7 @@ export class RootAnalyzerComponent {
 
   submit(): void {
     if (!this.selectedFile) {
-      this.errorMessage = 'Please select an image before processing.';
+      this.errorMessage = 'Selecione uma imagem antes de processar.';
       return;
     }
     if (this.form.invalid) {
@@ -67,7 +67,7 @@ export class RootAnalyzerComponent {
           if (error.error?.detail) {
             this.errorMessage = error.error.detail;
           } else {
-            this.errorMessage = 'Processing failed. Please try again with a different configuration.';
+            this.errorMessage = 'Falha no processamento. Tente novamente com uma configuração diferente.';
           }
         },
       });
