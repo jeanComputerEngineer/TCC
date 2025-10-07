@@ -1,0 +1,15 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: root-analyzer-backend
+    ports:
+      - "8000:8000"
+  frontend:
+    build:
+      context: ./Frontend
+    container_name: root-analyzer-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
