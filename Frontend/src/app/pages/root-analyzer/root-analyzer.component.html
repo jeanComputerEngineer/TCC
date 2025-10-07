@@ -1,0 +1,89 @@
+<section class="hero">
+  <div class="hero-content">
+    <h1>Maize Root Analyzer</h1>
+    <p>Upload high-resolution scans to extract structural traits following the workflow proposed by Teruo Matos.</p>
+  </div>
+</section>
+<section class="layout">
+  <form class="panel" [formGroup]="form" (ngSubmit)="submit()">
+    <h2>1. Image Input</h2>
+    <p>Select a TIFF, PNG, or JPEG scan captured with a reference ruler or embedded DPI metadata.</p>
+    <label class="file-picker">
+      <input type="file" accept="image/*" (change)="onFileChange($event)" />
+      <span>Select image</span>
+    </label>
+    <div class="field-group">
+      <label for="manualDpi">Manual DPI (optional)</label>
+      <input id="manualDpi" type="number" formControlName="manualDpi" placeholder="e.g., 600" />
+      <small *ngIf="form.controls.manualDpi.invalid && form.controls.manualDpi.touched">Provide a positive value.</small>
+    </div>
+    <div class="field-group">
+      <label for="threshold">Threshold (0-255, optional)</label>
+      <input id="threshold" type="number" formControlName="threshold" placeholder="Automatic when empty" />
+      <small *ngIf="form.controls.threshold.invalid && form.controls.threshold.touched">Use values between 0 and 255.</small>
+    </div>
+    <button class="primary" type="submit" [disabled]="processing">Process image</button>
+    <p class="hint">The algorithm replicates the original pipeline: grayscale conversion, threshold-based segmentation, skeletonization, branch detection, and metric extraction.</p>
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+  </form>
+  <div class="panel preview" *ngIf="previewUrl">
+    <h2>2. Preview</h2>
+    <img [src]="previewUrl" alt="Selected root scan" />
+  </div>
+</section>
+<section class="results" *ngIf="analysis">
+  <h2>3. Morphometric Insights</h2>
+  <div class="metrics">
+    <div class="metric">
+      <h3>DPI</h3>
+      <p>{{ analysis.dpi | number: '1.0-0' }} dpi</p>
+    </div>
+    <div class="metric">
+      <h3>Pixel size</h3>
+      <p>{{ analysis.pixelSizeMm | number: '1.3-3' }} mm</p>
+    </div>
+    <div class="metric">
+      <h3>Skeleton length</h3>
+      <p>{{ analysis.lengthMm | number: '1.2-2' }} mm</p>
+    </div>
+    <div class="metric">
+      <h3>Mean diameter</h3>
+      <p>{{ analysis.averageDiameterMm | number: '1.2-2' }} mm</p>
+    </div>
+    <div class="metric">
+      <h3>Branch points</h3>
+      <p>{{ analysis.branchPoints }}</p>
+    </div>
+    <div class="metric">
+      <h3>Root area</h3>
+      <p>{{ analysis.areaMm2 | number: '1.2-2' }} mm²</p>
+    </div>
+  </div>
+  <div class="visuals">
+    <article>
+      <header>
+        <h3>Grayscale</h3>
+        <button type="button" [disabled]="!analysis || !analysis.grayscaleImage" (click)="analysis && downloadImage(analysis.grayscaleImage, 'grayscale.png')">Download</button>
+      </header>
+      <img *ngIf="analysis?.grayscaleImage" [src]="getImageSource(analysis.grayscaleImage)" alt="Grayscale representation" />
+    </article>
+    <article>
+      <header>
+        <h3>Segmented</h3>
+        <button type="button" [disabled]="!analysis || !analysis.segmentedImage" (click)="analysis && downloadImage(analysis.segmentedImage, 'segmented.png')">Download</button>
+      </header>
+      <img *ngIf="analysis?.segmentedImage" [src]="getImageSource(analysis.segmentedImage)" alt="Binary segmentation" />
+    </article>
+    <article>
+      <header>
+        <h3>Skeleton</h3>
+        <button type="button" [disabled]="!analysis || !analysis.skeletonImage" (click)="analysis && downloadImage(analysis.skeletonImage, 'skeleton.png')">Download</button>
+      </header>
+      <img *ngIf="analysis?.skeletonImage" [src]="getImageSource(analysis.skeletonImage)" alt="Skeleton visualization" />
+    </article>
+  </div>
+</section>
+<div class="loading" *ngIf="processing">
+  <div class="spinner"></div>
+  <p>Processing roots...</p>
+</div>
