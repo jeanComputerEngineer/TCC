@@ -21,6 +21,7 @@
       <label for="threshold">Limiar (0-255, opcional)</label>
       <input id="threshold" type="number" formControlName="threshold" placeholder="Automático quando vazio" />
       <small *ngIf="form.controls.threshold.invalid && form.controls.threshold.touched">Utilize valores entre 0 e 255.</small>
+      <small>O pré-processamento responde em tempo real às mudanças de DPI e limiar.</small>
     </div>
     <button class="primary" type="submit" [disabled]="processing">Processar imagem</button>
     <p class="hint">O algoritmo replica o fluxo original: conversão para tons de cinza, segmentação por limiar, esqueletização, detecção de ramificações e extração de métricas.</p>
@@ -28,6 +29,7 @@
   </form>
   <div class="panel preview" *ngIf="previewUrl">
     <h2>2. Pré-visualização</h2>
+    <p>Analise a imagem original enquanto as camadas processadas são atualizadas automaticamente.</p>
     <img [src]="previewUrl" alt="Digitalização selecionada" />
   </div>
 </section>

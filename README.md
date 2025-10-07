@@ -4,9 +4,9 @@ Aplicação interativa inspirada no fluxo computacional de Teruo Matos para medi
 
 ## Funcionalidades
 
-- Experiência guiada que segue o pipeline original: carregamento da imagem, configuração de DPI, conversão para tons de cinza, segmentação, esqueletização, análise morfométrica e validação.
-- Processamento exclusivamente local entregue por um serviço FastAPI utilizando Pillow, NumPy, SciPy e scikit-image para medições reprodutíveis.
-- Visualização instantânea das camadas em tons de cinza, segmentada e do esqueleto com downloads rápidos para documentação.
+- Experiência guiada que segue o pipeline original: carregamento da imagem, leitura ou solicitação de DPI, conversão para tons de cinza, limiarização, validação geométrica por contornos, esqueletização e consolidação das métricas finais.
+- Processamento exclusivamente local entregue por um serviço FastAPI utilizando Pillow, NumPy, SciPy, scikit-image e OpenCV para medições reprodutíveis.
+- Visualização instantânea das camadas em tons de cinza, segmentada e do esqueleto com downloads rápidos para documentação, sempre atualizadas conforme o DPI ou limiar são ajustados.
 - Métricas quantitativas incluindo comprimento do esqueleto, pontos de ramificação, diâmetro médio e área total convertidas para unidades físicas a partir do DPI embutido ou informado.
 - Modos claro e escuro para ambientes de laboratório variados.
 
@@ -28,9 +28,9 @@ Abra [http://localhost:8080](http://localhost:8080) no navegador. A interface An
 ## Fluxo de uso
 
 1. Digitalize a amostra de raízes em um scanner de mesa. Prefira alto DPI (≥600) e inclua uma régua de calibração quando o arquivo não possuir metadados.
-2. Arraste a imagem para a interface ou clique em **Selecionar imagem** para procurar. Informe o DPI manualmente se a imagem não contiver essa informação.
-3. Opcionalmente ajuste o limiar de segmentação (0–255). Ao deixar o campo vazio, aplica-se o limiar automático de Otsu.
-4. Pressione **Processar imagem**. O backend realiza a conversão para tons de cinza, segmentação por limiar, esqueletização, detecção de ramificações e estimação de diâmetro via transformada de distância.
+2. Arraste a imagem para a interface ou clique em **Selecionar imagem** para procurar arquivos TIFF, PNG, JPG ou BMP. Informe o DPI manualmente se a imagem não contiver essa informação.
+3. Ajuste o limiar de segmentação (0–255) quando desejar. O algoritmo aplica automaticamente o valor de Otsu ao deixar o campo vazio.
+4. Observe as pré-visualizações em tons de cinza, segmentadas e do esqueleto reagindo em tempo real a cada alteração de DPI ou limiar. Utilize **Processar imagem** para consolidar manualmente os resultados quando desejar.
 5. Analise as métricas quantitativas e baixe as camadas em tons de cinza, segmentada e esqueleto para relatórios ou validação.
 
 ## Execução de testes
@@ -51,4 +51,4 @@ npm test
 
 ## Fundamentação científica
 
-A implementação reproduz as etapas computacionais descritas por Teruo Matos para análise de raízes de milho: normalização por DPI, conversão para tons de cinza, limiarização baseada em histograma, esqueletização morfológica, análise de ramificações, acumulação de comprimento com pesos euclidianos e estimativa de diâmetro por transformada de distância. O procedimento de validação segue a estratégia original de fios de náilon antes de aplicar o fluxo às imagens reais de raízes.
+A implementação reproduz as etapas computacionais descritas por Teruo Matos para análise de raízes de milho: normalização por DPI a partir de metadados ou valor informado pelo usuário, conversão para tons de cinza, limiarização guiada por histograma com inversão automática do fundo quando necessário, extração de contornos por Suzuki & Abe, filtragem de objetos por circularidade, esqueletização por afinamento em 8-vizinhança, identificação de ramificações, acumulação do comprimento do esqueleto por distâncias euclidianas e cálculo do diâmetro médio excluindo cruzamentos. O procedimento de validação segue a estratégia original de fios de náilon antes de aplicar o fluxo às imagens reais de raízes.
