@@ -1,0 +1,89 @@
+<section class="hero">
+  <div class="hero-content">
+    <h1>Analista de Raízes de Milho</h1>
+    <p>Envie digitalizações de alta resolução para extrair características estruturais seguindo o fluxo descrito por Teruo Matos.</p>
+  </div>
+</section>
+<section class="layout">
+  <form class="panel" [formGroup]="form" (ngSubmit)="submit()">
+    <h2>1. Entrada da Imagem</h2>
+    <p>Selecione uma digitalização TIFF, PNG, JPG ou BMP com régua de referência ou metadados de DPI embutidos.</p>
+    <label class="file-picker">
+      <input type="file" accept=".tif,.tiff,.png,.jpg,.jpeg,.bmp" (change)="onFileChange($event)" />
+      <span>Selecionar imagem</span>
+    </label>
+    <div class="field-group">
+      <label for="manualDpi">DPI manual (opcional)</label>
+      <input id="manualDpi" type="number" formControlName="manualDpi" placeholder="ex.: 600" />
+      <small *ngIf="form.controls.manualDpi.invalid && form.controls.manualDpi.touched">Informe um valor positivo.</small>
+    </div>
+    <div class="field-group">
+      <label for="threshold">Limiar (0-255, opcional)</label>
+      <input id="threshold" type="number" formControlName="threshold" placeholder="Automático quando vazio" />
+      <small *ngIf="form.controls.threshold.invalid && form.controls.threshold.touched">Utilize valores entre 0 e 255.</small>
+    </div>
+    <button class="primary" type="submit" [disabled]="processing">Processar imagem</button>
+    <p class="hint">O algoritmo replica o fluxo original: conversão para tons de cinza, segmentação por limiar, esqueletização, detecção de ramificações e extração de métricas.</p>
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+  </form>
+  <div class="panel preview" *ngIf="previewUrl">
+    <h2>2. Pré-visualização</h2>
+    <img [src]="previewUrl" alt="Digitalização selecionada" />
+  </div>
+</section>
+<section class="results" *ngIf="analysis">
+  <h2>3. Métricas Morfométricas</h2>
+  <div class="metrics">
+    <div class="metric">
+      <h3>DPI</h3>
+      <p>{{ analysis.dpi | number: '1.0-0' }} dpi</p>
+    </div>
+    <div class="metric">
+      <h3>Tamanho do pixel</h3>
+      <p>{{ analysis.pixelSizeMm | number: '1.3-3' }} mm</p>
+    </div>
+    <div class="metric">
+      <h3>Comprimento do esqueleto</h3>
+      <p>{{ analysis.lengthMm | number: '1.2-2' }} mm</p>
+    </div>
+    <div class="metric">
+      <h3>Diâmetro médio</h3>
+      <p>{{ analysis.averageDiameterMm | number: '1.2-2' }} mm</p>
+    </div>
+    <div class="metric">
+      <h3>Pontos de ramificação</h3>
+      <p>{{ analysis.branchPoints }}</p>
+    </div>
+    <div class="metric">
+      <h3>Área radicular</h3>
+      <p>{{ analysis.areaMm2 | number: '1.2-2' }} mm²</p>
+    </div>
+  </div>
+  <div class="visuals">
+    <article>
+      <header>
+        <h3>Tons de cinza</h3>
+        <button type="button" [disabled]="!analysis || !analysis.grayscaleImage" (click)="analysis && downloadImage(analysis.grayscaleImage, 'tons-cinza.png')">Baixar</button>
+      </header>
+      <img *ngIf="analysis?.grayscaleImage" [src]="getImageSource(analysis.grayscaleImage)" alt="Representação em tons de cinza" />
+    </article>
+    <article>
+      <header>
+        <h3>Segmentado</h3>
+        <button type="button" [disabled]="!analysis || !analysis.segmentedImage" (click)="analysis && downloadImage(analysis.segmentedImage, 'segmentado.png')">Baixar</button>
+      </header>
+      <img *ngIf="analysis?.segmentedImage" [src]="getImageSource(analysis.segmentedImage)" alt="Segmentação binária" />
+    </article>
+    <article>
+      <header>
+        <h3>Esqueleto</h3>
+        <button type="button" [disabled]="!analysis || !analysis.skeletonImage" (click)="analysis && downloadImage(analysis.skeletonImage, 'esqueleto.png')">Baixar</button>
+      </header>
+      <img *ngIf="analysis?.skeletonImage" [src]="getImageSource(analysis.skeletonImage)" alt="Visualização do esqueleto" />
+    </article>
+  </div>
+</section>
+<div class="loading" *ngIf="processing">
+  <div class="spinner"></div>
+  <p>Processando raízes...</p>
+</div>
