@@ -1,0 +1,228 @@
+:host {
+  display: block;
+}
+
+.results-shell {
+  width: 90vw;
+  max-width: 90vw;
+  margin: 0 auto;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.results-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.results-header h2,
+.results-header p,
+.metric h3,
+.metric p {
+  margin: 0;
+}
+
+.step-tag {
+  color: var(--ra-highlight);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.results-header h2 {
+  color: var(--ra-page-text);
+  font-size: 1.35rem;
+}
+
+.current-result-file {
+  margin-top: 0.25rem;
+  color: var(--ra-page-muted);
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.result-batch-dots {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.34rem;
+  flex-wrap: wrap;
+  max-width: min(760px, 100%);
+}
+
+.result-batch-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  border: 1px solid var(--ra-border);
+  background: var(--ra-surface-soft);
+  color: var(--ra-page-text);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.result-batch-dot.active {
+  background: var(--ra-accent-gradient);
+  color: var(--ra-button-text);
+  border-color: transparent;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.18), 0 10px 22px -16px rgba(53, 92, 125, 0.55);
+  transform: scale(1.06);
+}
+
+.result-batch-dot.error {
+  background: #fff4f3;
+  border-color: rgba(180, 35, 24, 0.18);
+  color: #b42318;
+}
+
+.error {
+  margin: 0;
+  color: #b42318;
+  font-weight: 700;
+}
+
+.metrics {
+  display: grid;
+  gap: 0.65rem;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+}
+
+.metric,
+.visual-card {
+  border-radius: 20px;
+  border: 1px solid var(--ra-border);
+  background: var(--ra-surface);
+}
+
+.metric {
+  padding: 0.75rem;
+  text-align: center;
+  display: grid;
+  gap: 0.24rem;
+}
+
+.metric h3 {
+  color: var(--ra-highlight);
+}
+
+.metric p {
+  color: var(--ra-page-text);
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.visuals {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.visual-card {
+  padding: 0.75rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.visual-card header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.visual-card h3 {
+  margin: 0;
+  color: var(--ra-page-text);
+}
+
+.action-button {
+  min-height: 36px;
+  padding: 0.48rem 0.78rem;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: var(--ra-success-gradient);
+  color: var(--ra-button-text);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.action-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.image-frame {
+  min-height: 240px;
+  border-radius: 10px;
+  background: var(--ra-surface-muted);
+  overflow: auto;
+  padding: 0.35rem;
+}
+
+.image-frame-dark {
+  background: #09111a;
+}
+
+.image-frame img {
+  width: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+@media (max-width: 820px) {
+  .results-shell {
+    width: 90vw;
+    max-width: 90vw;
+  }
+
+  .visual-card header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .results-header {
+    align-items: stretch;
+  }
+
+  .result-batch-dots {
+    justify-content: flex-start;
+  }
+}
+
+:host-context(body[data-theme='dark']) .results-header h2,
+:host-context(body[data-theme='dark']) .visual-card h3,
+:host-context(body[data-theme='dark']) .metric p {
+  color: var(--ra-page-text);
+}
+
+:host-context(body[data-theme='dark']) .current-result-file {
+  color: var(--ra-page-muted);
+}
+
+:host-context(body[data-theme='dark']) .step-tag,
+:host-context(body[data-theme='dark']) .metric h3 {
+  color: var(--ra-highlight);
+}
+
+:host-context(body[data-theme='dark']) .metric,
+:host-context(body[data-theme='dark']) .visual-card,
+:host-context(body[data-theme='dark']) .result-batch-dot {
+  background: var(--ra-surface);
+  border-color: var(--ra-border);
+}
+
+:host-context(body[data-theme='dark']) .result-batch-dot.active {
+  background: var(--ra-primary-gradient);
+}
+
+:host-context(body[data-theme='dark']) .action-button {
+  background: var(--ra-success-gradient);
+}
+
+:host-context(body[data-theme='dark']) .image-frame {
+  background: var(--ra-surface-muted);
+}

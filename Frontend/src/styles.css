@@ -1,0 +1,86 @@
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  font-family: 'Manrope', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  color-scheme: light dark;
+  --ra-page-bg:
+    linear-gradient(180deg, #f7f3ff 0%, #eff3ff 45%, #ffffff 100%);
+  --ra-page-text: #102135;
+  --ra-page-muted: rgba(16, 33, 53, 0.72);
+  --ra-hero-bg:
+    radial-gradient(circle at 10% -25%, rgba(236, 72, 153, 0.2), rgba(56, 189, 248, 0) 42%),
+    linear-gradient(135deg, #355c7d 0%, #6c5b7b 48%, #c06c84 100%);
+  --ra-surface: rgba(255, 255, 255, 0.94);
+  --ra-surface-soft: #f7fbff;
+  --ra-surface-muted: #eef6ff;
+  --ra-border: rgba(99, 102, 241, 0.16);
+  --ra-primary-gradient: linear-gradient(135deg, #355c7d 0%, #6c5b7b 100%);
+  --ra-secondary-gradient: linear-gradient(135deg, #4f46e5 0%, #818cf8 100%);
+  --ra-success-gradient: linear-gradient(135deg, #1f8c62 0%, #32aa73 100%);
+  --ra-danger-gradient: linear-gradient(135deg, #d14343 0%, #b42318 100%);
+  --ra-accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  --ra-upload-gradient: linear-gradient(135deg, #355c7d 0%, #4e7392 100%);
+  --ra-preview-frame-bg: #f4f6fb;
+  --ra-preview-overlay: rgba(8, 12, 28, 0.62);
+  --ra-highlight: #4f46e5;
+  --ra-focus: #6366f1;
+  --ra-focus-ring: rgba(99, 102, 241, 0.2);
+  --ra-button-text: #f7fbff;
+  --ra-shadow: 0 24px 56px -30px rgba(79, 70, 229, 0.32);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--ra-page-bg);
+  color: var(--ra-page-text);
+  transition: background 0.35s ease, color 0.35s ease;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+body[data-theme='dark'] {
+  --ra-page-bg:
+    radial-gradient(circle at 8% -5%, #222d4d 0%, #151d39 42%, #0b1223 100%);
+  --ra-page-text: #d7ebff;
+  --ra-page-muted: rgba(215, 235, 255, 0.74);
+  --ra-hero-bg:
+    radial-gradient(circle at 5% -16%, rgba(236, 72, 153, 0.22), rgba(236, 72, 153, 0) 44%),
+    linear-gradient(135deg, #312e81 0%, #1f2a4d 55%, #151a2f 100%);
+  --ra-surface: rgba(16, 30, 45, 0.94);
+  --ra-surface-soft: #102032;
+  --ra-surface-muted: #0f1b2a;
+  --ra-border: rgba(129, 140, 248, 0.28);
+  --ra-primary-gradient: linear-gradient(135deg, #355c7d 0%, #6c5b7b 100%);
+  --ra-secondary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  --ra-success-gradient: linear-gradient(135deg, #2f9e68 0%, #228555 50%, #1b6f46 100%);
+  --ra-danger-gradient: linear-gradient(135deg, #c03535 0%, #8f1d14 100%);
+  --ra-accent-gradient: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
+  --ra-upload-gradient: linear-gradient(135deg, #355c7d 0%, #4d6985 100%);
+  --ra-preview-frame-bg: #101a28;
+  --ra-preview-overlay: rgba(2, 5, 14, 0.88);
+  --ra-highlight: #a78bfa;
+  --ra-focus: #818cf8;
+  --ra-focus-ring: rgba(129, 140, 248, 0.24);
+  --ra-button-text: #f6fbf7;
+  --ra-shadow: 0 30px 60px -35px rgba(0, 0, 0, 0.82);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

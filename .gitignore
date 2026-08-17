@@ -1,0 +1,53 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+dist/
+build/
+dist-pyinstaller/
+build-pyinstaller/
+
+# FastAPI / Uvicorn logs
+*.log
+
+# Node modules and Angular builds
+Frontend/node_modules/
+ElectronApp/node_modules/
+**/node_modules/
+Frontend/dist/
+ElectronApp/dist/
+ElectronApp/release/
+
+# Electron build outputs
+ElectronApp/resources/python/processador-backend.exe
+ElectronApp/dist
+ElectronApp/release-output
+ElectronApp/resources/python/root-analyzer-backend.exe
+
+
+# IDE/Editor settings
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+~$*
+
+
+# Artefatos de build e dependencias
+Backend/.venv/
+Backend/dist-pyinstaller/
+Backend/build-pyinstaller/
+
+# Saidas de execucao dos testes
+Testes/Resultados Artigo Final/*.tmp

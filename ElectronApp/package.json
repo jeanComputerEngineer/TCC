@@ -1,0 +1,77 @@
+{
+  "name": "processador-imagens-raizes",
+  "version": "7.0.0",
+  "description": "Aplicativo desktop para processamento de imagens de ra\u00EDzes integrado ao pipeline TCC UEPG.",
+  "main": "main.js",
+  "author": "Jean Henrique & Augusto Santos",
+  "license": "MIT",
+  "scripts": {
+    "start": "cross-env NODE_ENV=development electron .",
+    "start:dev": "cross-env NODE_ENV=development concurrently \"npm:serve:backend\" \"npm:serve:frontend\" \"npm:serve:electron\"",
+    "serve:backend": "node scripts/run-python.js ../Backend/start_server.py",
+    "serve:frontend": "npm --prefix ../Frontend run start",
+    "serve:electron": "wait-on http-get://127.0.0.1:4200 && electron .",
+    "ensure:electron": "node scripts/ensure-electron.js",
+    "ensure:backend": "node scripts/ensure-backend-python.js",
+    "build": "npm run ensure:electron && npm run build:frontend && npm run build:backend && node scripts/copy-frontend.js",
+    "build:frontend": "node scripts/ensure-frontend.js && npm --prefix ../Frontend run build -- --configuration production",
+    "build:backend": "npm run ensure:backend && node scripts/run-python.js scripts/build-backend.py",
+    "dist": "node scripts/clean-release.js && npm run build && node scripts/build-electron.js"
+  },
+  "dependencies": {
+    "electron-log": "^5.1.2",
+    "wait-on": "^7.2.0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
+    "electron": "^31.7.4",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "productName": "Processador de Imagens de Ra\u00EDzes",
+    "appId": "br.com.processador.imagens.raizes",
+    "copyright": "\u00A9 Jean Henrique & Augusto Santos",
+    "files": [
+      "main.js",
+      "preload.js",
+      "package.json",
+      "dist/**/*"
+    ],
+    "directories": {
+      "output": "release-output"
+    },
+    "extraResources": [
+      {
+        "from": "resources/",
+        "to": "."
+      }
+    ],
+    "win": {
+      "icon": "resources/icons/app-icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "publisherName": [
+        "Jean Henrique",
+        "Augusto Santos"
+      ],
+      "artifactName": "Processador-de-Imagens-de-Raizes-Setup-${version}.exe"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": false,
+      "installerIcon": "resources/icons/app-icon.ico",
+      "uninstallerIcon": "resources/icons/app-icon.ico",
+      "displayLanguageSelector": false
+    }
+  }
+}

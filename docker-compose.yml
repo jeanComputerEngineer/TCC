@@ -1,0 +1,27 @@
+services:
+  backend:
+    build:
+      context: ./Backend
+    container_name: root-analyzer-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./Backend:/app
+    working_dir: /app
+    command: sh -c "pip install -q -r requirements.txt && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+
+  frontend-dev:
+    image: node:20
+    container_name: frontend-dev-1
+    working_dir: /app
+    environment:
+      - CHOKIDAR_USEPOLLING=1
+      - NG_CLI_ANALYTICS=false
+    volumes:
+      - ./Frontend:/app
+      - /app/node_modules
+    command: sh -lc "npm ci --no-audit --no-fund && npx -y @angular/cli@latest serve --host 0.0.0.0 --port 4200 --poll 1000 --proxy-config proxy.conf.json"
+    ports:
+      - "4200:4200"
+    depends_on:
+      - backend

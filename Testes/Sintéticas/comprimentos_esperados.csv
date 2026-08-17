@@ -1,0 +1,21 @@
+filename,expected_length_mm,dpi,width_px,height_px,background,root_width_px,group,notes
+sintetica_001_clara_reta_1000mm.png,1000.000000,300,1800,1300,light,7,sintetica_reta,10 raizes retas; comprimento conhecido pela centrolinha.
+sintetica_002_clara_curva_continua_1500mm.png,1500.000000,300,1900,1900,light,9,sintetica_continua,Raiz unica continua e curva.
+sintetica_003_escura_fragmentada_7000mm.png,7000.000000,300,2550,3509,dark,5,sintetica_fragmentada,Muitas raizes curtas separadas; testa filtragem de componentes.
+sintetica_004_escura_fragmentada_ruido_3000mm.png,3000.000000,300,2550,3509,dark,5,sintetica_fragmentada_ruido,Raizes separadas com pontos isolados de ruido.
+sintetica_005_escura_rede_densa_6600mm.png,6600.000000,300,2100,2600,dark,5,sintetica_densa,Rede densa de raizes visualmente sobrepostas.
+sintetica_006_escura_raizes_espessas_2500mm.png,2500.000000,300,1900,2400,dark,13,sintetica_espessa,Raizes espessas; testa se a esqueletizacao segue a centrolinha.
+sintetica_007_escura_vertical_2200mm.png,2200.000000,300,1700,2600,dark,5,sintetica_orientada,Raizes separadas predominantemente verticais em fundo escuro.
+sintetica_008_escura_diagonal_1800mm.png,1800.000000,300,1900,1900,dark,5,sintetica_orientada,Raizes predominantemente diagonais.
+sintetica_009_clara_fragmentada_4200mm.png,4200.000000,300,2400,3000,light,6,sintetica_orientada,Muitas raizes escuras separadas em fundo claro.
+sintetica_010_escura_baixo_contraste_2000mm.png,2000.000000,300,2100,2600,dark,5,sintetica_baixo_contraste,Raizes de baixo contraste em fundo escuro com ruido leve.
+sintetica_011_clara_com_ruido_3500mm.png,3500.000000,300,2300,2800,light,5,sintetica_orientada,Fundo claro com raizes e muitos pontos escuros isolados.
+sintetica_012_escura_cruzamentos_5200mm.png,5200.000000,300,2200,2400,dark,5,sintetica_cruzamentos,Raizes com cruzamentos concentrados no centro.
+sintetica_013_escura_fina_1200mm.png,1200.000000,300,1600,2000,dark,3,sintetica_orientada,Raizes muito finas.
+sintetica_014_escura_arcos_longos_7000mm.png,7000.000000,300,2550,3509,dark,5,sintetica_orientada,Arcos longos distribuidos em pagina completa.
+sintetica_015_escura_curtas_esparsas_2800mm.png,2800.000000,300,2300,3000,dark,4,sintetica_orientada,Muitos fragmentos curtos e esparsos.
+sintetica_016_clara_circular_continua_1000mm.png,999.992504,300,4700,4700,light,9,sintetica_circular_continua,Raiz continua quase circular semelhante a contornos de scanner.
+sintetica_017_clara_lacos_aninhados_1442mm.png,1441.636798,300,5200,5200,light,8,sintetica_circular_continua,Multiplas curvas continuas em lacos.
+sintetica_018_clara_espiral_continua_2609mm.png,2608.901693,300,2800,2800,light,8,sintetica_circular_continua,Caminho unico continuo em espiral.
+sintetica_019_escura_fragmentos_circulares_3600mm.png,3600.000000,300,2300,2300,dark,5,sintetica_circular_fragmentada,Fragmentos curvos separados organizados como arcos circulares.
+sintetica_020_clara_parecida_scanner_1063mm.png,1063.487742,300,2550,3509,light,7,sintetica_parecida_scanner,Padrao de lacos em baixo contraste semelhante a imagem de scanner.

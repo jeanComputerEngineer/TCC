@@ -1,0 +1,93 @@
+<section class="results-shell">
+  <header class="results-header">
+    <div>
+      <h2>Resultados processados</h2>
+      <p class="current-result-file" *ngIf="currentImageTitle">{{ currentImageTitle }}</p>
+    </div>
+
+    <div class="result-batch-dots" *ngIf="hasBatchNavigation" role="tablist" aria-label="Resultados do lote">
+      <button
+        *ngFor="let entry of batchEntries; let index = index"
+        type="button"
+        class="result-batch-dot"
+        [class.active]="index === activeBatchIndex"
+        [class.error]="!entry.analysis && !!entry.errorMessage"
+        (click)="selectBatchEntry.emit(index)"
+        [attr.aria-label]="'Resultado ' + (index + 1) + ': ' + entry.label"
+      >
+        {{ index + 1 }}
+      </button>
+    </div>
+  </header>
+
+  <p class="error" *ngIf="!hasValidAnalysis && isBatchProcessed">
+    Esta imagem não possui resultado válido. Selecione outra bolinha para ver os dados.
+  </p>
+
+  <ng-container *ngIf="analysis as data">
+    <div class="metrics" role="list">
+      <div class="metric" role="listitem">
+        <h3>DPI</h3>
+        <p>{{ data.dpi | number: '1.0-0' }} dpi</p>
+      </div>
+      <div class="metric" role="listitem">
+        <h3>Tam. do Pixel</h3>
+        <p>{{ data.pixelSizeMm | number: '1.4-4' }} mm</p>
+      </div>
+      <div class="metric" role="listitem">
+        <h3>Comprimento</h3>
+        <p>{{ data.lengthMm | number: '1.2-2' }} mm</p>
+      </div>
+      <div class="metric" role="listitem">
+        <h3>Diâmetro Médio</h3>
+        <p>{{ data.averageDiameterMm | number: '1.2-2' }} mm</p>
+      </div>
+      <div class="metric" role="listitem">
+        <h3>Pontos de Ramificação</h3>
+        <p>{{ data.branchPoints }}</p>
+      </div>
+      <div class="metric" role="listitem">
+        <h3>Área</h3>
+        <p>{{ data.areaMm2 | number: '1.2-2' }} mm2</p>
+      </div>
+    </div>
+
+    <div class="visuals">
+      <article class="visual-card">
+        <header>
+          <h3>Tons de cinza</h3>
+          <button class="action-button" type="button" [disabled]="!data.grayscaleImage" (click)="downloadGrayscale.emit()">
+            Baixar
+          </button>
+        </header>
+        <div class="image-frame">
+          <img *ngIf="data.grayscaleImage" [src]="'data:image/png;base64,' + data.grayscaleImage" alt="Imagem em tons de cinza" />
+        </div>
+      </article>
+
+      <article class="visual-card">
+        <header>
+          <h3>Segmentada</h3>
+          <button class="action-button" type="button" [disabled]="!data.segmentedImage" (click)="downloadSegmented.emit()">
+            Baixar
+          </button>
+        </header>
+        <div class="image-frame image-frame-dark">
+          <img *ngIf="data.segmentedImage" [src]="'data:image/png;base64,' + data.segmentedImage" alt="Imagem segmentada" />
+        </div>
+      </article>
+
+      <article class="visual-card">
+        <header>
+          <h3>Esqueletizada</h3>
+          <button class="action-button" type="button" [disabled]="!data.skeletonImage" (click)="downloadSkeleton.emit()">
+            Baixar
+          </button>
+        </header>
+        <div class="image-frame image-frame-dark">
+          <img *ngIf="data.skeletonImage" [src]="'data:image/png;base64,' + data.skeletonImage" alt="Imagem esqueletizada" />
+        </div>
+      </article>
+    </div>
+  </ng-container>
+</section>

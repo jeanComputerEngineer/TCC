@@ -1,0 +1,154 @@
+<section class="hero">
+  <div class="hero-content">
+    <h1>Processamento de Imagens de Raízes</h1>
+    <p>Seleção, prévia e resultados processados.</p>
+  </div>
+</section>
+
+<section class="layout">
+  <section
+    class="panel"
+    [class.panel-preview-mode]="previewStep"
+    [class.panel-selection-mode]="!previewStep"
+    [attr.aria-busy]="processing || previewProcessing || batchProcessing"
+  >
+    <app-selection-step
+      *ngIf="!previewStep"
+      [selectionFiles]="selectionFiles"
+      [hasSelectionFiles]="hasSelectionFiles"
+      [busy]="processing || previewProcessing || batchProcessing"
+      (selectionFilesChange)="onSelectionFilesChange($event)"
+      (removeSelectionFile)="removeSelectionFile($event)"
+      (clearSelectionFiles)="clearSelectionFiles()"
+      (openPreviewStep)="openPreviewStep()"
+    />
+
+    <app-preview-step
+      *ngIf="previewStep && selectedFile"
+      [selectedFile]="selectedFile"
+      [form]="form"
+      [backgroundOptions]="backgroundOptions"
+      [batchEntries]="batchEntries"
+      [activeBatchIndex]="activeBatchIndex"
+      [isBatchMode]="isBatchMode"
+      [isBatchProcessed]="isBatchProcessed"
+      [batchProcessing]="batchProcessing"
+      [processing]="processing"
+      [previewProcessing]="previewProcessing"
+      [workflowLocked]="workflowLocked"
+      [batchProgress]="batchProgress"
+      [processingProgressPercent]="processingProgressPercent"
+      [processingProgressLabel]="processingProgressLabel"
+      [processingStatusMessage]="processingStatusMessage"
+      [showProcessingProgressBar]="showProcessingProgressBar"
+      [batchNoticeMessage]="batchNoticeMessage"
+      [dpiHintMessage]="dpiHintMessage"
+      [previewHistogramImage]="previewHistogramImage"
+      [previewSegmentedImage]="previewSegmentedImage"
+      [previewForegroundPercent]="previewForegroundPercent"
+      [previewThresholdPercentile]="previewThresholdPercentile"
+      [previewDynamicRange]="previewDynamicRange"
+      [previewPixelSizeMm]="previewPixelSizeMm"
+      [showSuggestedThresholdIcon]="shouldShowSuggestedThresholdIcon()"
+      [thresholdAtSuggestion]="isThresholdAtSuggestion()"
+      [thresholdValue]="getThresholdSliderValue()"
+      [processingButtonLabel]="processingButtonLabel"
+      [canDownloadCsv]="canDownloadCsv"
+      [showPendingProcessingWarning]="showPendingProcessingWarning"
+      [pendingProcessingWarningMessage]="pendingProcessingWarningMessage"
+      [cropDisabled]="!selectedFile || !cropModalImageUrl || processing || previewProcessing || batchProcessing"
+      [isPreviewScrollEnabled]="isPreviewScrollEnabled()"
+      [previewZoomValue]="getZoomValue('preview')"
+      [previewZoomPercent]="getZoomPercent('preview')"
+      (selectBatchEntry)="selectBatchEntry($event)"
+      (thresholdSliderInput)="onThresholdSliderInput($event)"
+      (thresholdNumberInput)="onThresholdNumberInput($event)"
+      (decrementThreshold)="decrementThreshold()"
+      (incrementThreshold)="incrementThreshold()"
+      (restoreSuggestedThreshold)="restoreSuggestedThreshold()"
+      (histogramClick)="onHistogramClick($event)"
+      (back)="backToSelectionStep()"
+      (submitStep)="submit()"
+      (downloadCsv)="downloadCsv()"
+      (reprocessCurrentImage)="reprocessCurrentBatchImage()"
+      (discardChanges)="discardPendingChanges()"
+      (zoomOutPreview)="zoomOut('preview')"
+      (zoomInPreview)="zoomIn('preview')"
+      (resetZoomPreview)="resetZoom('preview')"
+      (zoomPercentInput)="onZoomPercentInput('preview', $event)"
+      (openCropModal)="openCropModal()"
+      (previewImageLoad)="onPreviewImageLoad($event)"
+    />
+
+    <p class="error" *ngIf="errorMessage" aria-live="assertive">{{ errorMessage }}</p>
+  </section>
+</section>
+
+<app-results-step
+  *ngIf="showResultsSection"
+  [analysis]="analysis"
+  [isBatchProcessed]="isBatchProcessed"
+  [batchEntries]="batchEntries"
+  [activeBatchIndex]="activeBatchIndex"
+  (selectBatchEntry)="selectBatchEntry($event)"
+  (downloadGrayscale)="downloadGrayscaleImage()"
+  (downloadSegmented)="downloadSegmentedImage()"
+  (downloadSkeleton)="downloadSkeletonImage()"
+/>
+
+<footer class="app-footer">
+  Desenvolvido por
+  <a href="https://www.linkedin.com/in/jean-henrique-software-developer/" target="_blank" rel="noopener noreferrer">Jean Henrique</a>
+  e
+  <a href="https://www.linkedin.com/in/augusto-lara-amorim-santos-260749301/" target="_blank" rel="noopener noreferrer">Augusto Santos</a>
+  - TCC UEPG
+</footer>
+
+<div class="crop-modal-backdrop" *ngIf="cropModalOpen" (click)="closeCropModal()">
+  <section class="crop-modal" role="dialog" aria-modal="true" aria-label="Recortar imagem" (click)="$event.stopPropagation()">
+    <header class="crop-modal-header">
+      <div>
+        <h3>Recortar imagem</h3>
+        <p>Arraste o quadrado para mover e use o canto inferior direito para aumentar ou diminuir o corte.</p>
+      </div>
+
+      <button type="button" class="crop-close" (click)="closeCropModal()" title="Fechar modal de recorte">
+        &#10005;
+      </button>
+    </header>
+
+    <div class="crop-modal-body">
+      <div class="crop-stage" *ngIf="cropModalImageUrl">
+        <img
+          #cropImageElement
+          [src]="cropModalImageUrl"
+          alt="Imagem para recorte"
+          (load)="onCropImageLoad($event)"
+        />
+
+        <div
+          class="crop-selection"
+          *ngIf="cropSelection"
+          [ngStyle]="getCropSelectionStyles()"
+          (pointerdown)="startCropMove($event)"
+        >
+          <button
+            type="button"
+            class="crop-handle"
+            (pointerdown)="startCropResize($event)"
+            title="Redimensionar recorte"
+            aria-label="Redimensionar recorte"
+          ></button>
+        </div>
+      </div>
+    </div>
+
+    <footer class="crop-modal-footer">
+      <p class="crop-modal-warning">Ao confirmar, esta imagem sera substituida pelo recorte na lista atual.</p>
+      <button type="button" class="crop-action crop-action-secondary" (click)="closeCropModal()" [disabled]="cropBusy">Cancelar</button>
+      <button type="button" class="crop-action crop-action-primary" (click)="confirmCrop()" [disabled]="cropBusy || !cropSelection">
+        {{ cropBusy ? 'Cortando...' : 'Confirmar corte' }}
+      </button>
+    </footer>
+  </section>
+</div>

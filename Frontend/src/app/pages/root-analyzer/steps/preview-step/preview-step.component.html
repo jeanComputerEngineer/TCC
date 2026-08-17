@@ -1,0 +1,335 @@
+<section class="step-shell">
+  <section class="analysis-layout has-preview" [attr.inert]="workflowLocked ? '' : null" [class.is-locked]="workflowLocked">
+    <div class="control-column">
+      <header class="step-header">
+        <div>
+          <h2>Validar pré-processamento</h2>
+          <p class="active-preview-file" *ngIf="selectedFile && !isBatchMode">Arquivo atual: {{ selectedFile.name }}</p>
+        </div>
+        <p class="dpi-hint">{{ dpiHintMessage }}</p>
+      </header>
+
+      <section class="batch-review" *ngIf="isBatchMode">
+        <p class="batch-message">{{ batchNoticeMessage }}</p>
+        <div class="batch-dots" role="tablist" aria-label="Imagens selecionadas no lote">
+          <button
+            *ngFor="let entry of batchEntries; let index = index; trackBy: trackByBatchEntry"
+            type="button"
+            class="batch-dot"
+            [class.active]="index === activeBatchIndex"
+            [class.done]="entry.analysis"
+            [class.error]="!entry.analysis && !!entry.errorMessage"
+            [disabled]="previewProcessing || batchProcessing"
+            (click)="selectBatchEntry.emit(index)"
+            [attr.aria-label]="'Imagem ' + (index + 1) + ': ' + entry.label"
+          >
+            {{ index + 1 }}
+          </button>
+        </div>
+        <p class="batch-current-file" *ngIf="selectedFile">
+          Arquivo atual {{ activeBatchIndex + 1 }}/{{ batchEntries.length }}: {{ selectedFile.name }}
+        </p>
+      </section>
+
+      <div class="control-grid" [formGroup]="form">
+        <div class="field-card">
+          <label for="manualDpi">DPI</label>
+          <input
+            id="manualDpi"
+            type="number"
+            step="any"
+            min="50"
+            max="2400"
+            formControlName="manualDpi"
+            placeholder="Ex.: 300"
+            title="Informe o DPI da digitalização"
+            [disabled]="workflowLocked"
+            [attr.aria-invalid]="form.controls['manualDpi'].invalid && form.controls['manualDpi'].touched"
+          />
+          <small *ngIf="form.controls['manualDpi'].invalid && form.controls['manualDpi'].touched">
+            Informe um valor plausível entre 50 e 2400 DPI.
+          </small>
+        </div>
+
+        <div class="field-card">
+          <div class="field-card-header">
+            <label>Fundo predominante</label>
+          </div>
+
+          <div class="background-options" role="radiogroup" aria-label="Modo de fundo">
+            <label class="background-option" *ngFor="let option of backgroundOptions">
+              <input type="radio" formControlName="backgroundMode" [value]="option.value" [disabled]="workflowLocked" />
+              <span>{{ option.label }}</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <section class="field-card threshold-card">
+        <div class="threshold-inline">
+          <label for="thresholdSlider">Limiar</label>
+          <input
+            id="thresholdSlider"
+            type="range"
+            min="0"
+            max="255"
+            [value]="thresholdValue"
+            [disabled]="workflowLocked"
+            (input)="thresholdSliderInput.emit($event)"
+            title="Ajuste horizontal do limiar"
+          />
+
+          <div class="threshold-stepper">
+            <div class="threshold-number-shell">
+              <input
+                id="thresholdNumber"
+                class="threshold-number"
+                type="number"
+                min="0"
+                max="255"
+                step="1"
+                [value]="thresholdValue"
+                [disabled]="workflowLocked"
+                (input)="thresholdNumberInput.emit($event)"
+                title="Valor numérico do limiar"
+              />
+              <div class="threshold-inline-arrows" aria-hidden="true">
+                <button
+                  type="button"
+                  class="stepper-button stepper-button-inline"
+                  [disabled]="workflowLocked"
+                  (click)="incrementThreshold.emit()"
+                  title="Aumentar limiar em 1"
+                  aria-label="Aumentar limiar em 1"
+                >
+                  &#9650;
+                </button>
+                <button
+                  type="button"
+                  class="stepper-button stepper-button-inline"
+                  [disabled]="workflowLocked"
+                  (click)="decrementThreshold.emit()"
+                  title="Diminuir limiar em 1"
+                  aria-label="Diminuir limiar em 1"
+                >
+                  &#9660;
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <button
+            *ngIf="showSuggestedThresholdIcon"
+            type="button"
+            class="action-button action-button-accent"
+            [disabled]="workflowLocked || thresholdAtSuggestion"
+            (click)="restoreSuggestedThreshold.emit()"
+            [title]="thresholdAtSuggestion ? 'O limiar já está no valor sugerido' : 'Sugestão automática'"
+            aria-label="Aplicar sugestão automática"
+          >
+            Auto
+          </button>
+        </div>
+      </section>
+
+      <article class="field-card histogram-card" *ngIf="previewHistogramImage">
+        <header>
+          <h3>Histograma</h3>
+          <p>Clique no histograma para posicionar o limiar. A faixa selecionada fica destacada em vermelho.</p>
+        </header>
+        <img [src]="previewHistogramImage" alt="Histograma da imagem" (click)="histogramClick.emit($event)" />
+
+        <div class="hist-stats">
+          <span *ngIf="previewForegroundPercent !== undefined">Foreground: {{ previewForegroundPercent | number: '1.1-1' }}%</span>
+          <span *ngIf="previewThresholdPercentile !== undefined">Percentil do limiar: {{ previewThresholdPercentile | number: '1.1-1' }}%</span>
+          <span *ngIf="previewDynamicRange !== undefined">Faixa dinâmica: {{ previewDynamicRange | number: '1.0-0' }}</span>
+          <span *ngIf="previewPixelSizeMm !== undefined">1 px = {{ previewPixelSizeMm | number: '1.4-4' }} mm</span>
+        </div>
+      </article>
+
+      <details class="field-card advanced-card" [formGroup]="form">
+        <summary>Opções avançadas</summary>
+
+        <div class="advanced-options">
+          <label class="advanced-option">
+            <input type="checkbox" formControlName="smoothSegmentation" [disabled]="workflowLocked" />
+            <span>Suavização</span>
+          </label>
+
+          <label class="advanced-option">
+            <input type="checkbox" formControlName="filterComponents" [disabled]="workflowLocked" />
+            <span>Filtrar componentes</span>
+          </label>
+
+          <label class="advanced-option">
+            <input type="checkbox" formControlName="pruneSkeleton" [disabled]="workflowLocked" />
+            <span>Podar esqueleto</span>
+          </label>
+        </div>
+      </details>
+
+    </div>
+
+    <div class="preview-column">
+      <article class="preview-main" [class.is-busy]="previewProcessing">
+        <header class="preview-header">
+          <div>
+            <h3>Prévia do limiar</h3>
+            <p>
+              Use a prévia para revisar a segmentação antes do processamento final. A marcação em vermelho mostra o limiar
+              aplicado a toda a imagem, sem o filtro de componentes: pontos isolados podem aparecer aqui e ainda assim serem
+              descartados no resultado, caso a opção avançada "Filtrar componentes" esteja ativada.
+            </p>
+          </div>
+
+          <div class="image-toolbar">
+            <button type="button" class="toolbar-button" [disabled]="workflowLocked" (click)="zoomOutPreview.emit()" title="Diminuir zoom da prévia" aria-label="Diminuir zoom da prévia">
+              <svg class="toolbar-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="10" cy="10" r="5.5"></circle>
+                <path d="M14.5 14.5L20 20"></path>
+                <path d="M7.25 10H12.75"></path>
+              </svg>
+            </button>
+            <button type="button" class="toolbar-button" [disabled]="workflowLocked" (click)="zoomInPreview.emit()" title="Aumentar zoom da prévia" aria-label="Aumentar zoom da prévia">
+              <svg class="toolbar-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="10" cy="10" r="5.5"></circle>
+                <path d="M14.5 14.5L20 20"></path>
+                <path d="M10 7.25V12.75"></path>
+                <path d="M7.25 10H12.75"></path>
+              </svg>
+            </button>
+            <button type="button" class="toolbar-button toolbar-button-fit" [disabled]="workflowLocked" (click)="resetZoomPreview.emit()" title="Ajustar zoom para caber na área">
+              Fit
+            </button>
+            <label class="zoom-percent-field" for="previewZoomPercent">
+              <input
+                id="previewZoomPercent"
+                type="number"
+                min="10"
+                max="400"
+                step="1"
+                inputmode="numeric"
+                [value]="previewZoomPercent"
+                [disabled]="workflowLocked"
+                (change)="zoomPercentInput.emit($event)"
+                (keydown.enter)="zoomPercentInput.emit($event)"
+                title="Editar porcentagem do zoom da prévia"
+                aria-label="Porcentagem do zoom da prévia"
+              />
+              <span>%</span>
+            </label>
+            <button
+              class="action-button action-button-secondary action-button-compact action-button-icon"
+              type="button"
+              [disabled]="cropDisabled"
+              (click)="openCropModal.emit()"
+              title="Recortar imagem carregada"
+              aria-label="Recortar imagem carregada"
+            >
+              <svg class="toolbar-icon toolbar-icon-scissors" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="6.5" cy="6.5" r="2.5"></circle>
+                <circle cx="6.5" cy="17.5" r="2.5"></circle>
+                <path d="M9 8L19 3.5"></path>
+                <path d="M9 16L19 20.5"></path>
+                <path d="M9 12L14 12"></path>
+              </svg>
+            </button>
+          </div>
+        </header>
+
+        <div
+          #previewFrameElement
+          class="preview-image-frame"
+          [class.preview-scroll-enabled]="isPreviewScrollEnabled"
+          [class.preview-image-frame-loading]="previewProcessing"
+        >
+          <div class="image-zoom-surface" [style.--image-scale]="previewZoomValue" *ngIf="previewSegmentedImage">
+            <img [src]="previewSegmentedImage" alt="Prévia da imagem com sobreposição vermelha do limiar" (load)="previewImageLoad.emit($event)" />
+          </div>
+
+          <div class="preview-local-loading" *ngIf="previewProcessing">
+            <div class="spinner" aria-hidden="true"></div>
+            <p>Atualizando prévia da imagem...</p>
+          </div>
+        </div>
+      </article>
+
+    </div>
+
+    <div class="workflow-footer">
+      <div class="workflow-actions workflow-actions-back">
+        <button
+          type="button"
+          class="action-button action-button-danger"
+          [disabled]="processing || previewProcessing || batchProcessing"
+          (click)="back.emit()"
+          title="Voltar para seleção de imagens"
+        >
+          Voltar
+        </button>
+      </div>
+
+      <div class="preview-actions">
+        <div class="workflow-actions workflow-actions-right-aligned">
+          <button
+            *ngIf="isBatchMode && isBatchProcessed"
+            class="action-button action-button-secondary"
+            type="button"
+            [disabled]="processing || previewProcessing || batchProcessing"
+            (click)="reprocessCurrentImage.emit()"
+            title="Reprocessar imagem atual"
+          >
+            Reprocessar imagem atual
+          </button>
+
+          <button
+            class="action-button action-button-primary"
+            type="button"
+            [disabled]="processing || previewProcessing || batchProcessing"
+            (click)="submitStep.emit()"
+            [title]="processingButtonLabel"
+          >
+            {{ processingButtonLabel }}
+          </button>
+
+          <button
+            class="action-button action-button-success"
+            type="button"
+            *ngIf="canDownloadCsv"
+            (click)="downloadCsv.emit()"
+            title="Baixar dados extraídos em CSV"
+          >
+            <span class="icon icon-download" aria-hidden="true"></span>
+            <span>Baixar CSV</span>
+          </button>
+
+          <button
+            type="button"
+            class="action-button action-button-warning"
+            *ngIf="showPendingProcessingWarning"
+            [disabled]="workflowLocked"
+            (click)="discardChanges.emit()"
+            title="Descartar alterações não processadas"
+          >
+            Descartar alterações
+          </button>
+        </div>
+
+        <p class="processing-warning-text" *ngIf="showPendingProcessingWarning">
+          {{ pendingProcessingWarningMessage }}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="workflow-lock-overlay" *ngIf="workflowLocked" role="status" aria-live="polite" aria-atomic="true">
+    <div class="workflow-lock-card">
+      <div class="spinner" aria-hidden="true"></div>
+      <p class="workflow-lock-title">{{ processingStatusMessage }}</p>
+      <p class="workflow-lock-subtitle" *ngIf="processingProgressLabel">{{ processingProgressLabel }}</p>
+      <div class="workflow-progress" *ngIf="showProcessingProgressBar && processingProgressPercent > 0">
+        <div class="workflow-progress-bar" [style.width.%]="processingProgressPercent"></div>
+      </div>
+    </div>
+  </div>
+</section>

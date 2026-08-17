@@ -1,0 +1,67 @@
+<section class="step-card">
+  <div class="step-header">
+    <h2>Selecionar arquivos</h2>
+    <p>Carregue entre 1 e 20 imagens (TIFF, PNG, JPG ou BMP).</p>
+  </div>
+
+  <input
+    #selectionFileInput
+    type="file"
+    multiple
+    accept=".tif,.tiff,.png,.jpg,.jpeg,.bmp"
+    (change)="selectionFilesChange.emit($event)"
+    [disabled]="busy"
+    class="hidden-file-input"
+    title="Selecionar imagens de raiz"
+  />
+
+  <div class="selection-toolbar">
+    <button
+      type="button"
+      class="action-button action-button-upload"
+      [disabled]="busy"
+      (click)="selectionFileInput.click()"
+      title="Selecionar imagens"
+    >
+      <span class="icon icon-file" aria-hidden="true"></span>
+      <span>Escolher imagens</span>
+    </button>
+
+    <button
+      type="button"
+      class="action-button action-button-ghost"
+      [disabled]="!hasSelectionFiles || busy"
+      (click)="onClear()"
+      title="Limpar lista de imagens"
+    >
+      Limpar lista
+    </button>
+
+    <button
+      type="button"
+      class="action-button action-button-process"
+      [disabled]="busy"
+      (click)="onOpenPreviewStep()"
+      title="Ir para validação de prévia"
+    >
+      Analisar prévia
+    </button>
+  </div>
+
+  <p class="step-hint">Você pode anexar mais arquivos clicando novamente em "Escolher imagens", ou selecionando vários arquivos.</p>
+
+  <ul class="selection-list" *ngIf="hasSelectionFiles">
+    <li *ngFor="let file of selectionFiles; let index = index; trackBy: trackByFile">
+      <span>{{ index + 1 }}. {{ file.name }}</span>
+      <button
+        type="button"
+        class="inline-remove"
+        [disabled]="busy"
+        (click)="onRemove(index)"
+        title="Remover arquivo da lista"
+      >
+        Remover
+      </button>
+    </li>
+  </ul>
+</section>

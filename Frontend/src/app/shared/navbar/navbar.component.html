@@ -1,0 +1,10 @@
+<nav class="navbar">
+  <div class="brand">Análise de Raízes</div>
+  <ng-container *ngIf="theme$ | async as theme">
+    <button class="theme-toggle-btn" type="button" (click)="toggleTema()" aria-label="Alternar tema"
+      [attr.title]="theme === 'dark' ? 'Ativar tema claro' : 'Ativar tema escuro'">
+      <span class="sr-only">{{ theme === 'dark' ? 'Modo claro' : 'Modo escuro' }}</span>
+      <span class="theme-icon" aria-hidden="true"></span>
+    </button>
+  </ng-container>
+</nav>
